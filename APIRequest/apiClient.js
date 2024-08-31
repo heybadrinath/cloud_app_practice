@@ -4,22 +4,22 @@ class ApiClient {
   constructor(accessToken) {
     this.accessToken = accessToken;
   }
-  async makeRequest(method, url, data = null) {
-    const configData = {
-      method: method,
-      url: url,
-      headers: {
-        Authorization: `Bearer ${this.accessToken}`,
-        "Content-Type": "application/json",
-      },
-      data: data,
-    };
 
+  async makeRequest(method, url, data = null) {
     try {
-      const response = await axios(configData);
+      const response = await axios({
+        method,
+        url,
+        headers: {
+          Authorization: `Bearer ${this.accessToken}`,
+          "Content-Type": "application/json",
+        },
+        data,
+      });
       return response.data;
     } catch (error) {
-      throw new Error(`API Request failed: ${error.message}`);
+      console.error("API request failed:", error);
+      throw new Error("API request failed");
     }
   }
 }
