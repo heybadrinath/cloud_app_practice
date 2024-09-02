@@ -7,6 +7,7 @@ class ApiClient {
 
   async makeRequest(method, url, data = null) {
     try {
+
       const response = await axios({
         method,
         url,

@@ -2,6 +2,7 @@ const OAuthConfig = require("../config/oauth");
 const LastPassService = require("../services/lastpass");
 const CalendlyService = require("../services/calendly");
 const DropboxService = require("../services/dropbox");
+const GitHubService = require("../services/github");
 
 class UserController {
   async authorizeUser(req, res) {
@@ -19,8 +20,8 @@ class UserController {
 
   async listUsers(req, res) {
     try {
-      const authorizationCode = req.query.code;
-      const { service } = req.query;
+      const { code: authorizationCode, service } = req.query;
+
       if (!authorizationCode) {
         return res.status(400).send({ error: "Missing authorization code" });
       }
@@ -30,18 +31,27 @@ class UserController {
         authorizationCode
       );
 
-      let serviceInstance;
-      if (service === "lastpass") {
-        serviceInstance = new LastPassService(accessToken);
-      } else if (service === "calendly") {
-        serviceInstance = new CalendlyService(accessToken);
-      } else if (service === "dropbox") {
-        serviceInstance = new DropboxService(accessToken);
-      } else {
-        return res.status(400).send({ error: "Unsupported service" });
+      let serviceInstance,users;
+
+      switch (service) {
+        case "calendly":
+          serviceInstance = new CalendlyService(accessToken);
+          users = await serviceInstance.listUsers();
+          break;
+        case "lastpass":
+          serviceInstance = new LastPassService(accessToken);
+          break;
+        case "dropbox":
+          serviceInstance = new DropboxService(accessToken);
+          break;
+        case "github":
+          serviceInstance = new GitHubService(accessToken);
+          users = await serviceInstance.listOrganizationMembers();
+          break;
+        default:
+          return res.status(400).json({ error: "Unsupported service" });
       }
 
-      const users = await serviceInstance.listUsers();
       res.status(200).send(users);
     } catch (error) {
       console.error(error);
