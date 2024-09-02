@@ -7,10 +7,14 @@ router.get("/auth/:service", userController.authorizeUser);
 // Endpoint to receive the authorization code and list users
 router.get("/users", userController.listUsers);
 
-router.get("/", (req,res) => {
-    res.json({
-        "message": "Routes working"
-    })
-})
+router.post("/invite/:service", userController.inviteUserToService);
+
+router.delete("/remove/:service", userController.removeUserFromService);
+
+router.get("/", (req, res) => {
+  res.json({
+    message: "Routes working",
+  });
+});
 
 module.exports = router;
