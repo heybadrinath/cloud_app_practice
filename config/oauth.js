@@ -25,6 +25,13 @@ class OAuthConfig {
         clientSecret: process.env.DROPBOX_CLIENT_SECRET,
         redirectUri: process.env.DROPBOX_REDIRECT_URI,
       },
+      github: {
+        authUrl: "https://github.com/login/oauth/authorize",
+        tokenUrl: "https://github.com/login/oauth/access_token",
+        clientId: process.env.GITHUB_CLIENT_ID,
+        clientSecret: process.env.GITHUB_CLIENT_SECRET,
+        redirectUri: process.env.GITHUB_REDIRECT_URI,
+      },
     };
   }
 
@@ -49,6 +56,11 @@ class OAuthConfig {
       const response = await axios.post(config.tokenUrl, params, {
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
       });
+      if (service === "github") {
+        const resultParams = new URLSearchParams(response.data);
+        return resultParams.get("access_token"); // Extracting the access_token from the URL-encoded string since github return is not same for all other returns.
+      }
+
       return response.data.access_token;
     } catch (error) {
       console.error("Failed to retrieve access token:", error);
