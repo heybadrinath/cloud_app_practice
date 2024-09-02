@@ -12,6 +12,13 @@ class DropboxService {
       {}
     );
   }
+  async removeUserFromOrganization(userId) {
+    return await this.apiClient.makeRequest(
+      "POST",
+      `https://api.dropboxapi.com/2/team/members/remove`,
+      { user_id: userId }
+    );
+  }
 }
 
 module.exports = DropboxService;
