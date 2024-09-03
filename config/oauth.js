@@ -1,5 +1,6 @@
 const axios = require("axios");
 require("dotenv").config();
+const logger = require("./logger");
 
 class OAuthConfig {
   constructor() {
@@ -36,12 +37,16 @@ class OAuthConfig {
   }
 
   getAuthUrl(service) {
+    logger.info(`OAuthConfig: Generating OAuth URL for ${service}`);
+
     const config = this.config[service];
     if (!config) throw new Error(`Unsupported service: ${service}`);
     return `${config.authUrl}?response_type=code&client_id=${config.clientId}&redirect_uri=${config.redirectUri}`;
   }
 
   async getOAuthToken(service, authorizationCode) {
+    logger.info(`OAuthConfig: Getting OAuth token for ${service}`);
+
     const config = this.config[service];
     if (!config) throw new Error(`Unsupported service: ${service}`);
 

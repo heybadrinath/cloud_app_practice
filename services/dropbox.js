@@ -1,21 +1,21 @@
-const ApiClient = require("../APIRequest/apiClient");
+const BaseService = require("./baseService");
+const logger = require("../config/logger");
 
-class DropboxService {
-  constructor(accessToken) {
-    this.apiClient = new ApiClient(accessToken);
-  }
-
+class DropboxService extends BaseService {
   async listUsers() {
-    return await this.apiClient.makeRequest(
+    logger.info("DropboxService: Listing users");
+    return await this.makeRequest(
       "POST",
       "https://api.dropboxapi.com/2/sharing/list_folders",
       {}
     );
   }
+
   async removeUserFromOrganization(userId) {
-    return await this.apiClient.makeRequest(
+    logger.info(`DropboxService: Removing user ${userId} from organization`);
+    return await this.makeRequest(
       "POST",
-      `https://api.dropboxapi.com/2/team/members/remove`,
+      "https://api.dropboxapi.com/2/team/members/remove",
       { user_id: userId }
     );
   }
