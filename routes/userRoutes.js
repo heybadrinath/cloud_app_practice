@@ -13,7 +13,7 @@ router.delete("/remove/:service", userController.removeUserFromService);
 
 router.get("/", (req, res) => {
   res.json({
-    message: "Routes working",
+    message: "Routes are working",
   });
 });
 
