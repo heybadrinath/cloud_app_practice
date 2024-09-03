@@ -1,29 +1,20 @@
-const ApiClient = require("../APIRequest/apiClient");
+const BaseService = require("./baseService");
+const logger = require("../config/logger");
 
-class LastPassService {
-  constructor(accessToken) {
-    this.apiClient = new ApiClient(accessToken);
-  }
-
+class LastPassService extends BaseService {
   async addUser(user) {
-    return await this.apiClient.makeRequest(
-      "POST",
-      "https://api.lastpass.com/users",
-      user
-    );
+    logger.info(`LastPassService: Adding user with details: ${JSON.stringify(user)}`);
+    return await this.makeRequest("POST", "https://api.lastpass.com/users", user);
   }
+
   async listUsers() {
-    return await this.apiClient.makeRequest(
-      "GET",
-      "https://api.lastpass.com/users"
-    );
+    logger.info("LastPassService: Listing users");
+    return await this.makeRequest("GET", "https://api.lastpass.com/users");
   }
 
   async deleteUser(userId) {
-    return await this.apiClient.makeRequest(
-      "DELETE",
-      `https://api.lastpass.com/users/${userId}`
-    );
+    logger.info(`LastPassService: Deleting user with ID: ${userId}`);
+    return await this.makeRequest("DELETE", `https://api.lastpass.com/users/${userId}`);
   }
 }
 

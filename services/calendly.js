@@ -1,43 +1,33 @@
-const ApiClient = require("../APIRequest/apiClient");
+const BaseService = require("./baseService");
+const logger = require("../config/logger");
 
-class CalendlyService {
-  constructor(accessToken) {
-    this.apiClient = new ApiClient(accessToken);
-  }
-
+class CalendlyService extends BaseService {
   async listUsers() {
-    return await this.apiClient.makeRequest(
-      "GET",
-      "https://api.calendly.com/users/me"
-    );
+    logger.info("CalendlyService: Listing users");
+    return await this.makeRequest("GET", "https://api.calendly.com/users/me");
   }
 
   async inviteUserToOrganization(uuid, email) {
-    const invitationData = {
-      email,
-    };
-
-    return await this.apiClient.makeRequest(
+    logger.info(`CalendlyService: Inviting user ${email} to organization ${uuid}`);
+    const invitationData = { email };
+    return await this.makeRequest(
       "POST",
       `https://api.calendly.com/organizations/${uuid}/invitations`,
       invitationData
     );
   }
 
-
-  async removeUserFromOrganization(uuid, email) {
-    // code to check if the user exists or not in the org
+  async removeUserFromOrganization(uuid, userId) {
+    logger.info(`CalendlyService: Removing user ${userId} from organization ${uuid}`);
     if (!uuid) {
-      throw new Error(`User with email ${email} not found in Calendly organization.`);
+      logger.error("CalendlyService: UUID is required for removing a user");
+      throw new Error("User UUID is required");
     }
-
-    return await this.apiClient.makeRequest(
+    return await this.makeRequest(
       "DELETE",
       `https://api.calendly.com/organizations/${uuid}/invitations/${userId}`
     );
   }
-
-
 }
 
 module.exports = CalendlyService;
